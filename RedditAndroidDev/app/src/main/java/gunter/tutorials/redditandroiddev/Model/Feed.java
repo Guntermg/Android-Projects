@@ -5,23 +5,11 @@ import com.google.gson.annotations.SerializedName;
 
 
 public class Feed {
-    @SerializedName("kind")
-    @Expose
-    private String kind;
-
-    @SerializedName("kind")
+    @SerializedName("data")
     @Expose
     private Data data;
 
     // Getters and Setters
-    public String getKind() {
-        return kind;
-    }
-
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
-
     public Data getData() {
         return data;
     }
@@ -34,8 +22,7 @@ public class Feed {
     @Override
     public String toString() {
         return "Feed{" +
-                "kind='" + kind + '\'' +
-                ", data=" + data +
+                "data=" + data +
                 '}';
     }
 }

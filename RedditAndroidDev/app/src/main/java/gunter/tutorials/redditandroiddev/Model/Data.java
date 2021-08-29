@@ -8,23 +8,11 @@ import java.util.ArrayList;
 import gunter.tutorials.redditandroiddev.Model.Children.Children;
 
 public class Data {
-    @SerializedName("modhash")
-    @Expose
-    private String modhash;
-
     @SerializedName("children")
     @Expose
     private ArrayList<Children> children;
 
     // Getters and Setters
-    public String getModhash() {
-        return modhash;
-    }
-
-    public void setModhash(String modhash) {
-        this.modhash = modhash;
-    }
-
     public ArrayList<Children> getChildren() {
         return children;
     }
@@ -37,8 +25,7 @@ public class Data {
     @Override
     public String toString() {
         return "Data{" +
-                "modhash='" + modhash + '\'' +
-                ", children=" + children +
+                "children=" + children +
                 '}';
     }
 }

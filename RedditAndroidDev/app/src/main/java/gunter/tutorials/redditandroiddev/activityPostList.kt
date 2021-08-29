@@ -30,15 +30,14 @@ class activityPostList : AppCompatActivity() {
 
         var titleList:ArrayList<Item> = ArrayList()
         // Inicializa requisição da API e exibe lista de títulos
-        var titles = apiConnect()
+        apiConnect()
 
     }
 
 
-
-    private fun apiConnect(): ArrayList<String> {
+    // retornava ArrayList<String>
+    private fun apiConnect() {
         val apiInterface = ApiInterface.create().getFeed()
-        var titleContent: ArrayList<String> = ArrayList()   // NOT REALLY USED - TAKE IT OUT
 
 
         apiInterface.enqueue( object : Callback<Feed> {
@@ -70,9 +69,6 @@ class activityPostList : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Something went wrong.", Toast.LENGTH_SHORT).show()
             }
         })
-        //val callbackAnswer:Callback<Feed> =
-
-        return titleContent
     }
 
 
