@@ -36,18 +36,6 @@ class activityPostList : AppCompatActivity() {
 
 
 
-    // NÃO UTILIZADA - DELETAR
-    private fun updateItemList(titles: ArrayList<String>):ArrayList<Item> {
-        var titleList:ArrayList<Item> = ArrayList()
-
-        for((index, item) in titles.withIndex()) {
-            var novoItem = Item(item)
-            titleList.add(novoItem)
-        }
-
-        return titleList
-    }
-
     private fun apiConnect(): ArrayList<String> {
         val apiInterface = ApiInterface.create().getFeed()
         var titleContent: ArrayList<String> = ArrayList()   // NOT REALLY USED - TAKE IT OUT
@@ -98,13 +86,4 @@ class activityPostList : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
-
 }
-
-
-
-
-// MANUAL VERSIONING:
-//
-// - added onBackPressed() go back to main
-// -
