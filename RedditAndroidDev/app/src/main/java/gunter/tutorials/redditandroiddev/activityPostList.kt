@@ -1,5 +1,6 @@
 package gunter.tutorials.redditandroiddev
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Window
@@ -22,9 +23,9 @@ class activityPostList : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);   // Esconde título
-        getSupportActionBar()!!.hide();                  // Esconde barra de título
-        this.getWindow()!!.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); // ativa modo fullscreen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);   // Hide title
+        getSupportActionBar()!!.hide();                  // Hide title bar
+        this.getWindow()!!.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); // Enable Fullscreen
         setContentView(R.layout.activity_post_list)
 
         var titleList:ArrayList<Item> = ArrayList()
@@ -32,6 +33,8 @@ class activityPostList : AppCompatActivity() {
         var titles = apiConnect()
 
     }
+
+
 
     // NÃO UTILIZADA - DELETAR
     private fun updateItemList(titles: ArrayList<String>):ArrayList<Item> {
@@ -46,48 +49,62 @@ class activityPostList : AppCompatActivity() {
     }
 
     private fun apiConnect(): ArrayList<String> {
-        val apiInterface = ApiInterface.create().getFeed()  // CHECK THIS
-        var titleContent: ArrayList<String> = ArrayList()
+        val apiInterface = ApiInterface.create().getFeed()
+        var titleContent: ArrayList<String> = ArrayList()   // NOT REALLY USED - TAKE IT OUT
+
 
         apiInterface.enqueue( object : Callback<Feed> {
             override fun onResponse(call: Call<Feed>?, response: Response<Feed>?) {
                 if(response?.body() != null) {
-
+                    // get API response
                     val body = response?.body()?.data?.children
+                    // Set ArrayList of Item elements for recycleView
                     var titleList:ArrayList<Item> = ArrayList()
-//                    Toast.makeText(applicationContext, titleContent.size.toString(), Toast.LENGTH_SHORT).show()
                     for ((index, item) in body!!.withIndex()) {
-                        //title = body.get(index).data.title
-                        //titleContent.add(body?.get(index).data.title)
                         var novoItem = Item(item.data.title)
                         titleList.add(novoItem)
                     }
+
+                    // Set recyclerView with values from API
                     val rv = recycleView
                     rv.adapter = redditTitlesAdapter(titleList, this@activityPostList)
                     val layoutManager = LinearLayoutManager(this@activityPostList)
                     rv.layoutManager = layoutManager
 
-
-                    //Toast.makeText(applicationContext, titleContent.size.toString(), Toast.LENGTH_SHORT).show()
                 }
                 else {
-                    Toast.makeText(applicationContext, "it's null ?", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "No posts found.", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<Feed>?, t: Throwable?) {
                 t?.printStackTrace()
-                Toast.makeText(applicationContext, "it's failure  :(", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Something went wrong.", Toast.LENGTH_SHORT).show()
             }
         })
+        //val callbackAnswer:Callback<Feed> =
 
         return titleContent
+    }
+
+
+    override fun onBackPressed() {
+        goBacktoMain()
+    }
+
+    // If back button pressed: Go back to main
+    private fun goBacktoMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }
 
 
+
+
 // MANUAL VERSIONING:
 //
-// - added internet permission on manifest xml
-// - added kotlinx coroutines on build.gradle
+// - added onBackPressed() go back to main
+// -
