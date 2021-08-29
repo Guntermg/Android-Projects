@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/itemLayout"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="@color/reddit_dark_gray"
+    android:layout_margin="0dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        tools:text="@tools:sample/full_names"
+        android:paddingLeft="25dp"
+        android:paddingVertical="5dp"
+        android:layout_marginTop="22dp"
+        android:textStyle="normal"
+        android:textSize="16dp"
+        android:textColor="@color/reddit_white"
+        android:background="@drawable/item_round_corner"
+        android:backgroundTint="@color/reddit_light_gray"
+        />
+
+</LinearLayout>

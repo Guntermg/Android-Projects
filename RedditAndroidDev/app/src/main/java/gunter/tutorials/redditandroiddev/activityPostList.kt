@@ -2,65 +2,88 @@ package gunter.tutorials.redditandroiddev
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import gunter.tutorials.redditandroiddev.Model.Children.Children
+import kotlinx.android.synthetic.main.activity_post_list.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import org.json.JSONObject
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class activityPostList : AppCompatActivity() {
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);   // Esconde título
+        getSupportActionBar()!!.hide();                  // Esconde barra de título
+        this.getWindow()!!.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); // ativa modo fullscreen
         setContentView(R.layout.activity_post_list)
 
-        /*try {
-            val result = GlobalScope.async {
-                callAPI("https://www.reddit.com/r/androiddev.json?raw_json=1")
-            }
+        var titleList:ArrayList<Item> = ArrayList()
+        // Inicializa requisição da API e exibe lista de títulos
+        var titles = apiConnect()
 
-            if (result != null) {
-                Toast.makeText(this, "Deu ruim!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Tem alguma coisa!", Toast.LENGTH_SHORT).show()
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }*/
     }
 
-        // DOES NOT WORK
-    private fun callAPI(apiURL: String):String? {
-        // Link to API: https://www.reddit.com/r/androiddev.json?raw_json=1
-        var result: String? = ""
-        val url: URL;
-        var connection: HttpURLConnection? = null
-        try {
-            url = URL(apiURL)
-            connection = url.openConnection() as HttpURLConnection
+    // NÃO UTILIZADA - DELETAR
+    private fun updateItemList(titles: ArrayList<String>):ArrayList<Item> {
+        var titleList:ArrayList<Item> = ArrayList()
 
-            // set the request method - GET
-            connection.requestMethod = "GET"
-            val `in` = connection.inputStream
-            val reader = InputStreamReader(`in`)
-            // read the response data
-            var data = reader.read()
-            while (data != -1) {
-                val current = data.toChar()
-                result += current
-                data = reader.read()
-            }
-            return result
-        } catch (e: Exception) {
-            e.printStackTrace()
+        for((index, item) in titles.withIndex()) {
+            var novoItem = Item(item)
+            titleList.add(novoItem)
         }
 
-        return null
-
-        TODO("call  the mf api")
+        return titleList
     }
+
+    private fun apiConnect(): ArrayList<String> {
+        val apiInterface = ApiInterface.create().getFeed()  // CHECK THIS
+        var titleContent: ArrayList<String> = ArrayList()
+
+        apiInterface.enqueue( object : Callback<Feed> {
+            override fun onResponse(call: Call<Feed>?, response: Response<Feed>?) {
+                if(response?.body() != null) {
+
+                    val body = response?.body()?.data?.children
+                    var titleList:ArrayList<Item> = ArrayList()
+//                    Toast.makeText(applicationContext, titleContent.size.toString(), Toast.LENGTH_SHORT).show()
+                    for ((index, item) in body!!.withIndex()) {
+                        //title = body.get(index).data.title
+                        //titleContent.add(body?.get(index).data.title)
+                        var novoItem = Item(item.data.title)
+                        titleList.add(novoItem)
+                    }
+                    val rv = recycleView
+                    rv.adapter = redditTitlesAdapter(titleList, this@activityPostList)
+                    val layoutManager = LinearLayoutManager(this@activityPostList)
+                    rv.layoutManager = layoutManager
+
+
+                    //Toast.makeText(applicationContext, titleContent.size.toString(), Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    Toast.makeText(applicationContext, "it's null ?", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Feed>?, t: Throwable?) {
+                t?.printStackTrace()
+                Toast.makeText(applicationContext, "it's failure  :(", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        return titleContent
+    }
+
 }
 
 
